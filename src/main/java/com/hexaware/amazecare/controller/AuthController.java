@@ -2,9 +2,6 @@ package com.hexaware.amazecare.controller;
 
 import java.security.Principal;
 
-
-import java.time.LocalDate;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,9 +17,9 @@ import com.hexaware.amazecare.JwtUtil;
 import com.hexaware.amazecare.dto.JwtDto;
 import com.hexaware.amazecare.dto.ResponseMessageDto;
 import com.hexaware.amazecare.exceptions.InvalidUsernameException;
-import com.hexaware.amazecare.model.Doctor;
+import com.hexaware.amazecare.model.Patient;
 import com.hexaware.amazecare.model.User;
-import com.hexaware.amazecare.service.DoctorService;
+import com.hexaware.amazecare.service.PatientService;
 import com.hexaware.amazecare.service.UserSecurityService;
 import com.hexaware.amazecare.service.UserService;
 
@@ -37,7 +34,7 @@ public class AuthController {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private DoctorService doctorService;
+	private PatientService patientService;
 	
 	@PostMapping("/api/token")
 	public ResponseEntity<?> getToken(@RequestBody User user, JwtDto dto ) {
@@ -61,18 +58,17 @@ public class AuthController {
 		}
 	}
 
-	@PostMapping("/auth/sign-up/doctor")
-	public ResponseEntity<?> doctorSignUp(@RequestBody Doctor doctor, ResponseMessageDto dto) {
+	@PostMapping("/auth/sign-up/patient")
+	public ResponseEntity<?> doctorSignUp(@RequestBody Patient patient, ResponseMessageDto dto) {
 		try {
 			User user = new User();
-			user.setUsername(doctor.getUser().getUsername());
-			user.setPassword(doctor.getUser().getPassword());
-			user.setRole(doctor.getUser().getRole());
+			user.setUsername(patient.getUser().getUsername());
+			user.setPassword(patient.getUser().getPassword());
+			user.setRole(patient.getUser().getRole());
 			user = userService.signup(user);
-			doctor.setUser(user);
-			doctor.setJoiningDate(LocalDate.now());
-			doctor = doctorService.insert(doctor);
-			return ResponseEntity.ok(doctor);
+			patient.setUser(user);
+			patient = patientService.insert(patient);
+			return ResponseEntity.ok(patient);
 
 		} catch (InvalidUsernameException e) {
 			dto.setMsg(e.getMessage());
@@ -81,7 +77,7 @@ public class AuthController {
 	}
 
 	
-	@GetMapping("/api/doctor/hello")
+	@GetMapping("/api/patient/hello")
 	public String sayHelloDoc(Principal principal) {
 		String user = "";
 		if(principal == null) {
