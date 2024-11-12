@@ -29,7 +29,7 @@ public class OutPatientController {
 	public OutPatient registerInPatient(@RequestBody OutPatient outPatient) {
 		User user=new User();
 		user.setUsername(outPatient.getPatient().getUser().getUsername());
-		user.setPassword(outPatient.getPatient().getUser().getUsername());
+		user.setPassword(outPatient.getPatient().getUser().getPassword());
 		user.setRole(outPatient.getPatient().getUser().getRole());
 		user=userService.insert(user);
 		
