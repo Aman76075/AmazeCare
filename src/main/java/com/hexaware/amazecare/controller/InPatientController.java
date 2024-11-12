@@ -30,7 +30,7 @@ public class InPatientController {
 	public InPatient registerInPatient(@RequestBody InPatient inPatient) {
 		User user=new User();
 		user.setUsername(inPatient.getPatient().getUser().getUsername());
-		user.setPassword(inPatient.getPatient().getUser().getUsername());
+		user.setPassword(inPatient.getPatient().getUser().getPassword());
 		user.setRole(inPatient.getPatient().getUser().getRole());
 		user=userService.insert(user);
 		
