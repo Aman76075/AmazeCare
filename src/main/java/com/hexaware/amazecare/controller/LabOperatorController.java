@@ -43,7 +43,7 @@ public class LabOperatorController {
 	public LabOperator onboardOperator(@RequestBody LabOperator labOperator) {
 		User user = new User();
 		user.setUsername(labOperator.getUser().getUsername());
-		user.setPassword(labOperator.getUser().getUsername());
+		user.setPassword(labOperator.getUser().getPassword());
 		user.setRole(labOperator.getUser().getRole());
 		user = userService.insert(user);
 		labOperator.setUser(user);

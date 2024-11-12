@@ -41,7 +41,7 @@ public class DoctorController {
 	public Doctor registerDoctor(@RequestBody Doctor doctor) {
 		User user=new User();
 		user.setUsername(doctor.getUser().getUsername());
-		user.setPassword(doctor.getUser().getUsername());
+		user.setPassword(doctor.getUser().getPassword());
 		user.setRole(doctor.getUser().getRole());
 		user=userService.insert(user);
 		doctor.setUser(user);
