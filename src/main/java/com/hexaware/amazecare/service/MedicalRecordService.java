@@ -1,5 +1,8 @@
 package com.hexaware.amazecare.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,11 @@ public class MedicalRecordService {
 
 	public MedicalRecord insert(MedicalRecord medicalRecord) {
 		return medicalRecordRepository.save(medicalRecord);
+	}
+
+	public List<MedicalRecord> getAllMedicalRecordwithId(int pid) {
+		Optional<MedicalRecord>optional= medicalRecordRepository.findById(pid);
+		return optional.stream().toList();
 	}
 
 }
