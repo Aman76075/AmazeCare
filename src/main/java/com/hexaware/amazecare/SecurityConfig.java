@@ -32,6 +32,10 @@ public class SecurityConfig {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(HttpMethod.POST, "/api/token").permitAll()
 						.requestMatchers(HttpMethod.POST, "/auth/sign-up/doctor").permitAll()
+						.requestMatchers(HttpMethod.POST, "/auth/sign-up/inPatient").permitAll()
+						.requestMatchers(HttpMethod.POST, "/auth/sign-up/outPatient").permitAll()
+						.requestMatchers(HttpMethod.POST, "/auth/sign-up/lab-operator").permitAll()
+						.requestMatchers(HttpMethod.GET,"/api/hello").authenticated()
 						.requestMatchers(HttpMethod.GET, "/api/doctor/hello").hasAuthority("DOCTOR").anyRequest().permitAll())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 

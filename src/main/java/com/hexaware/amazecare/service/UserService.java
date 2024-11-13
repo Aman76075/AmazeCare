@@ -13,8 +13,10 @@ import com.hexaware.amazecare.repository.UserRepository;
 
 @Service
 public class UserService {
+	
 	@Autowired
 	private UserRepository userRepository;
+	
 	@Autowired
 	private BCryptPasswordEncoder passEncoder;
 
