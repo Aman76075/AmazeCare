@@ -1,12 +1,10 @@
 package com.hexaware.amazecare.service;
 
-<<<<<<< HEAD
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-=======
->>>>>>> 308ec524e2d1e0d1f81c1f681fe1f7bb0638bcbb
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,30 +119,5 @@ public class DoctorService {
 		return list;		
 	}
 
-
-	public List<AppointmentDto> fetchAllAppointments(int did) {
-		Appointment_Status as=Appointment_Status.valueOf("BOOKED");
-		List<Object[]> listObjArray =appointmentRepository.fetchAllAppointments(as,did);
-		List<AppointmentDto> list=new ArrayList<>();
-		for( Object[] obj : listObjArray) {
-			String name=(String)obj[0];
-			int age=(int)obj[1];
-			String gender=(String)obj[2];
-			String patient_type=obj[3].toString();
-			LocalDate date=(LocalDate)obj[4];
-			String timeSlot=obj[5].toString();
-			String status=obj[6].toString();
-		    AppointmentDto dto=new AppointmentDto();
-		    dto.setName(name);
-		    dto.setAge(age);
-		    dto.setGender(gender);
-		    dto.setPatient_type(patient_type);
-		    dto.setDate(date);
-		    dto.setTimeSlot(timeSlot);
-		    dto.setStatus(status);
-		    list.add(dto);
-		}
-		return list;		
-	}
 
 }
