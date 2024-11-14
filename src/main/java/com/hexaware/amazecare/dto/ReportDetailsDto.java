@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 308ec524e2d1e0d1f81c1f681fe1f7bb0638bcbb
 package com.hexaware.amazecare.dto;
 
 import java.time.LocalDate;
