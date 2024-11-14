@@ -1,7 +1,9 @@
+
 package com.hexaware.amazecare.controller;
 
 
 import java.time.LocalDate;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.hexaware.amazecare.dto.AppointmentDto;
 import com.hexaware.amazecare.dto.ResponseMessageDto;
 import com.hexaware.amazecare.enums.TestScanStatus;
 import com.hexaware.amazecare.exceptions.ResourceNotFoundException;
@@ -82,5 +86,10 @@ public class DoctorController {
 	    testAndScans.setTestOrScanPrescibedon(LocalDate.now());
 	    testAndScans=testAndScansService.insert(testAndScans);
 	    return ResponseEntity.ok(testAndScans);
+	}
+	@GetMapping("/doctor/appointment/getAll/{did}")
+	public List<AppointmentDto> fetchAllAppointments(@PathVariable int did){
+		List<AppointmentDto> list=doctorService.fetchAllAppointments(did);
+		return list;
 	}
 }
