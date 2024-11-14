@@ -1,7 +1,10 @@
 package com.hexaware.amazecare.controller;
 
+import java.security.Principal;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,9 +25,11 @@ public class ReportController {
 	private PatientService patientService;
 	@Autowired
 	private ReportService reportService;
+	Logger logger = LoggerFactory.getLogger(ReportController.class);
 	
 	@GetMapping("reports/fetch/{pid}")
-	public ResponseEntity<?> fetchReports(@PathVariable int pid,ResponseMessageDto dto) throws ResourceNotFoundException{
+	public ResponseEntity<?> fetchReports(@PathVariable int pid,ResponseMessageDto dto,Principal principal) throws ResourceNotFoundException{
+		logger.info("API Accessed by "+principal.getName());
 		patientService.validate(pid);
 		List<ReportDetailsDto>list=reportService.fetchReport(pid);
 		return ResponseEntity.ok(list);

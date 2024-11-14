@@ -30,12 +30,14 @@ import com.hexaware.amazecare.dto.ResponseMessageDto;
 import com.hexaware.amazecare.exceptions.InvalidUsernameException;
 import com.hexaware.amazecare.exceptions.ResourceNotFoundException;
 import com.hexaware.amazecare.model.Doctor;
+import com.hexaware.amazecare.model.Executive;
 import com.hexaware.amazecare.model.InPatient;
 import com.hexaware.amazecare.model.LabOperator;
 import com.hexaware.amazecare.model.OutPatient;
 import com.hexaware.amazecare.model.Patient;
 import com.hexaware.amazecare.model.User;
 import com.hexaware.amazecare.service.DoctorService;
+import com.hexaware.amazecare.service.ExecutiveService;
 import com.hexaware.amazecare.service.InPatientService;
 import com.hexaware.amazecare.service.LabOperatorService;
 import com.hexaware.amazecare.service.OutPatientService;
@@ -64,6 +66,8 @@ public class AuthController {
 	private OutPatientService outPatientService;
 	@Autowired
 	private LabOperatorService labOperatorService;
+	@Autowired
+	private ExecutiveService executiveService;
 	Logger logger = LoggerFactory.getLogger(AuthController.class);
 
 	
@@ -140,7 +144,8 @@ public class AuthController {
 		}
 	}
 	@PostMapping("/auth/sign-up/doctor")
-	public ResponseEntity<?> doctorSignUp(@RequestBody Doctor doctor, ResponseMessageDto dto) {
+	public ResponseEntity<?> doctorSignUp(@RequestBody Doctor doctor, ResponseMessageDto dto,Principal principal) {
+		logger.info("API accessed by "+principal.getName());
 		try {
 			User user = new User();
 			user.setUsername(doctor.getUser().getUsername());
@@ -159,7 +164,8 @@ public class AuthController {
 	}
 	
 	@PostMapping("/auth/sign-up/lab-operator")
-	public ResponseEntity<?> labOperatorSignUp(@RequestBody LabOperator labOperator,ResponseMessageDto dto){
+	public ResponseEntity<?> labOperatorSignUp(@RequestBody LabOperator labOperator,ResponseMessageDto dto,Principal principal){
+		logger.info("API accessed by "+principal.getName());
 		try {
 		User user = new User();
 		user.setUsername(labOperator.getUser().getUsername());
@@ -170,6 +176,23 @@ public class AuthController {
 		labOperator.setJoinedOn(LocalDate.now());
 		labOperator=labOperatorService.getOperator(labOperator);
 		return ResponseEntity.ok(labOperator);
+		}catch (InvalidUsernameException e) {
+			dto.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(dto);
+		}
+	}
+	@PostMapping("/auth/sign-up/executive")
+	public ResponseEntity<?> executiveSignUp(@RequestBody Executive executive,ResponseMessageDto dto){
+		try {
+		User user = new User();
+		user.setUsername(executive.getUser().getUsername());
+		user.setPassword(executive.getUser().getPassword());
+		user.setRole(executive.getUser().getRole());
+		user = userService.signup(user);
+		executive.setUser(user);
+		executive.setJoinedOn(LocalDate.now());
+		executive=executiveService.getExecutive(executive);
+		return ResponseEntity.ok(executive);
 		}catch (InvalidUsernameException e) {
 			dto.setMsg(e.getMessage());
 			return ResponseEntity.badRequest().body(dto);
@@ -263,17 +286,6 @@ public class AuthController {
 	
 	@GetMapping("/api/outpatient/all")
 	public Page<InPatient> getAllOutpatient(
-			@RequestParam(required = false, defaultValue = "0") int page, 
-			@RequestParam(required = false, defaultValue = "5000") int size) {
-		Pageable pageable =  PageRequest.of(page, size);
-		logger.info("Fetching all inpatient using pageable...");
-		if(size==5000)
-			logger.warn("Fetching inpatient without limit ");
-		return inPatientService.getAllInpatient(pageable);
-	}
-	
-	@GetMapping("/api/doctor/all")
-	public Page<InPatient> getAllDoctor(
 			@RequestParam(required = false, defaultValue = "0") int page, 
 			@RequestParam(required = false, defaultValue = "5000") int size) {
 		Pageable pageable =  PageRequest.of(page, size);

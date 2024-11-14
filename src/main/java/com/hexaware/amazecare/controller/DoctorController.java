@@ -2,10 +2,13 @@
 package com.hexaware.amazecare.controller;
 
 
+import java.security.Principal;
 import java.time.LocalDate;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +43,7 @@ public class DoctorController {
 	
 	@Autowired
 	private TestAndScansService testAndScansService;
+	Logger logger = LoggerFactory.getLogger(DoctorController.class);
 	
 	@PostMapping("/doctor/register")
 	public Doctor registerDoctor(@RequestBody Doctor doctor) {
@@ -58,8 +62,9 @@ public class DoctorController {
 		return doctorService.getAllAppointments(did);
 	}
 	@PostMapping("/doctor/generateMedicalRecord/{did}")
-	public ResponseEntity<?> generateRecord(@PathVariable int did,@RequestBody MedicalRecord medicalRecord,ResponseMessageDto dto) {
-	    Doctor doctor=null;
+	public ResponseEntity<?> generateRecord(@PathVariable int did,@RequestBody MedicalRecord medicalRecord,ResponseMessageDto dto,Principal principal) {
+		logger.info("API Acccessed by "+principal.getName());
+		Doctor doctor=null;
 	    try {
 	    	doctor=doctorService.validate(did);
 	    }catch(ResourceNotFoundException e) {
@@ -73,7 +78,8 @@ public class DoctorController {
 	    
 	}
 	@PostMapping("doctor/testnscans/{did}")
-	public ResponseEntity<?>getTestnScans(@PathVariable int did,@RequestBody TestAndScans testAndScans,ResponseMessageDto dto){
+	public ResponseEntity<?>getTestnScans(@PathVariable int did,@RequestBody TestAndScans testAndScans,ResponseMessageDto dto,Principal principal){
+		logger.info("API Acccessed by "+principal.getName());
 		Doctor doctor=null;
 	    try {
 	    	doctor=doctorService.validate(did);
@@ -88,7 +94,8 @@ public class DoctorController {
 	    return ResponseEntity.ok(testAndScans);
 	}
 	@GetMapping("/doctor/appointment/getAll/{did}")
-	public List<AppointmentDto> fetchAllAppointments(@PathVariable int did){
+	public List<AppointmentDto> fetchAllAppointments(@PathVariable int did,Principal principal){
+		logger.info("API Acccessed by "+principal.getName());
 		List<AppointmentDto> list=doctorService.fetchAllAppointments(did);
 		return list;
 	}

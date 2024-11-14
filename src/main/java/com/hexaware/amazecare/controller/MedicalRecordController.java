@@ -1,8 +1,11 @@
 package com.hexaware.amazecare.controller;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +25,12 @@ public class MedicalRecordController {
 	private MedicalRecordService medicalRecordService;
 	@Autowired
 	private PatientService patientService;
+	Logger logger = LoggerFactory.getLogger(MedicalRecordController.class);
 
 	/* Gettingmedical record by patient id */
 	@GetMapping("/medicalrecord/{id}")
-	public ResponseEntity<?> getMedicalRecord(@PathVariable int pid, ResponseMessageDto dto) {
+	public ResponseEntity<?> getMedicalRecord(@PathVariable int pid, ResponseMessageDto dto,Principal principal) {
+		logger.info("API accessed by "+principal.getName());
 		List<MedicalRecord> list = new ArrayList<>();
 		try {
 			patientService.validate(pid);
