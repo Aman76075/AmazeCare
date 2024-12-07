@@ -1,6 +1,7 @@
 package com.hexaware.amazecare.controller;
 
 import java.io.IOException;
+
 import java.security.Principal;
 import java.time.LocalDate;
 
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +49,7 @@ import com.hexaware.amazecare.service.UserService;
 import com.hexaware.amazecare.controller.AuthController;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:4200"})
 public class AuthController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -143,44 +146,7 @@ public class AuthController {
 			return ResponseEntity.badRequest().body(dto);
 		}
 	}
-	@PostMapping("/auth/sign-up/doctor")
-	public ResponseEntity<?> doctorSignUp(@RequestBody Doctor doctor, ResponseMessageDto dto,Principal principal) {
-		logger.info("API accessed by "+principal.getName());
-		try {
-			User user = new User();
-			user.setUsername(doctor.getUser().getUsername());
-			user.setPassword(doctor.getUser().getPassword());
-			user.setRole(doctor.getUser().getRole());
-			user = userService.signup(user);
-			doctor.setUser(user);
-			doctor.setJoiningDate(LocalDate.now());
-			doctor = doctorService.insert(doctor);
-			return ResponseEntity.ok(doctor);
-
-		} catch (InvalidUsernameException e) {
-			dto.setMsg(e.getMessage());
-			return ResponseEntity.badRequest().body(dto);
-		}
-	}
 	
-	@PostMapping("/auth/sign-up/lab-operator")
-	public ResponseEntity<?> labOperatorSignUp(@RequestBody LabOperator labOperator,ResponseMessageDto dto,Principal principal){
-		logger.info("API accessed by "+principal.getName());
-		try {
-		User user = new User();
-		user.setUsername(labOperator.getUser().getUsername());
-		user.setPassword(labOperator.getUser().getPassword());
-		user.setRole(labOperator.getUser().getRole());
-		user = userService.signup(user);
-		labOperator.setUser(user);
-		labOperator.setJoinedOn(LocalDate.now());
-		labOperator=labOperatorService.getOperator(labOperator);
-		return ResponseEntity.ok(labOperator);
-		}catch (InvalidUsernameException e) {
-			dto.setMsg(e.getMessage());
-			return ResponseEntity.badRequest().body(dto);
-		}
-	}
 	@PostMapping("/auth/sign-up/executive")
 	public ResponseEntity<?> executiveSignUp(@RequestBody Executive executive,ResponseMessageDto dto){
 		try {
@@ -317,6 +283,20 @@ public class AuthController {
 		dto.setMsg("doctor Deleted");
 		logger.info("doctor deleted with ID: " + id);
 		return ResponseEntity.ok(dto);
+	}
+	@GetMapping("/auth/userDetails")
+	public ResponseEntity<?>getUserDetails(Principal principal){
+		String loggedInUsername = principal.getName();
+		User user  = (User)userSecurityService.loadUserByUsername(loggedInUsername);
+		String role=user.getRole().toString();
+		switch(role) {
+		case "DOCTOR":
+			return ResponseEntity.ok(doctorService.getDoctorDetails(user.getId()));
+		case "EXECUTIVE":
+			return ResponseEntity.ok(executiveService.getExecutiveDetails(user.getId()));
+		}
+		return ResponseEntity.badRequest().body("NOT FOUND");
+		
 	}
 
 }

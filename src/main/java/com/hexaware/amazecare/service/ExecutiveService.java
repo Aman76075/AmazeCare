@@ -1,5 +1,7 @@
 package com.hexaware.amazecare.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,14 @@ public class ExecutiveService {
 
 	public Executive getExecutive(Executive executive) {
 		return executiveRepository.save(executive);
+	}
+
+	public Executive getExecutiveDetails(int id) {
+		return executiveRepository.getExecutiveDetails(id);
+	}
+
+	public Executive getExecutiveDetailsById(int eid) {
+		return executiveRepository.findById(eid).get();
 	}
 
 }

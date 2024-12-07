@@ -1,5 +1,6 @@
 package com.hexaware.amazecare.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,10 @@ public class LabOperatorService {
 			throw new ResourceNotFoundException("Invalid LabOperator Id");
 		}
 		return optional.get();
+	}
+
+	public List<LabOperator> getAllLabOperators() {
+		return labOperatorRepository.findAll();
 	}
 
 }

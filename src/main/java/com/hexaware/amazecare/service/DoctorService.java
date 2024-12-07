@@ -22,8 +22,10 @@ import com.hexaware.amazecare.enums.Department;
 import com.hexaware.amazecare.exceptions.ResourceNotFoundException;
 import com.hexaware.amazecare.model.Appointment;
 import com.hexaware.amazecare.model.Doctor;
+import com.hexaware.amazecare.model.DoctorSchedule;
 import com.hexaware.amazecare.repository.AppointmentRepository;
 import com.hexaware.amazecare.repository.DoctorRepository;
+import com.hexaware.amazecare.repository.DoctorScheduleRepository;
 
 @Service
 public class DoctorService {
@@ -32,6 +34,8 @@ public class DoctorService {
 	
 	@Autowired
 	private AppointmentRepository appointmentRepository;
+	@Autowired
+	private DoctorScheduleRepository doctorScheduleRepository;
 
 	public Doctor insert(Doctor doctor) {
 		return doctorRepository.save(doctor);
@@ -106,6 +110,8 @@ public class DoctorService {
 			LocalDate date=(LocalDate)obj[4];
 			String timeSlot=obj[5].toString();
 			String status=obj[6].toString();
+			int appointmentId=(int)obj[7];
+			int patientId=(int)obj[8];
 		    AppointmentDto dto=new AppointmentDto();
 		    dto.setName(name);
 		    dto.setAge(age);
@@ -114,9 +120,27 @@ public class DoctorService {
 		    dto.setDate(date);
 		    dto.setTimeSlot(timeSlot);
 		    dto.setStatus(status);
+		    dto.setAppointmentId(appointmentId);
+		    dto.setPatientId(patientId);
 		    list.add(dto);
 		}
 		return list;		
+	}
+
+	public Doctor getDoctorDetails(int id) {
+		 return doctorRepository.getDoctorDetails(id);
+	}
+
+	public List<Doctor> getAllDoctors() {
+		return doctorRepository.findAll();
+	}
+
+	public DoctorSchedule setSchedule(DoctorSchedule doctorSchedule) {
+		return doctorScheduleRepository.save(doctorSchedule);
+	}
+
+	public Doctor getDoctorDetailsByDoctorId(int did) {
+		return doctorRepository.findById(did).get();
 	}
 
 
