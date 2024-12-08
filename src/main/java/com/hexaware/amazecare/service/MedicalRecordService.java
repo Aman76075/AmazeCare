@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.hexaware.amazecare.model.MedicalRecord;
@@ -18,9 +20,8 @@ public class MedicalRecordService {
 		return medicalRecordRepository.save(medicalRecord);
 	}
 
-	public List<MedicalRecord> getAllMedicalRecordwithId(int pid) {
-		Optional<MedicalRecord>optional= medicalRecordRepository.findById(pid);
-		return optional.stream().toList();
+	public Page<MedicalRecord> getAllMedicalRecordwithId(int pid, Pageable pageable) {
+		return medicalRecordRepository.findAllRecordById(pid,pageable);
 	}
 
 }

@@ -1,3 +1,4 @@
+
 package com.hexaware.amazecare.repository;
 
 import java.util.List;
@@ -21,7 +22,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     	       "p.patientType as patient_type, " +
     	       "a.date as date, " +
     	       "a.timeSlot as timeSlot, " +
-    	       "a.status as status " +
+    	       "a.status as status, " +
+    	       "a.id as appointmentId, "+
+    	       "p.id as patientId "+
     	       "FROM Appointment a " +
     	       "JOIN a.patient p " +
     	       "LEFT JOIN InPatient i ON p.id = i.patient.id " +

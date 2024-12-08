@@ -1,38 +1,55 @@
 package com.hexaware.amazecare.controller;
 
+import java.io.IOException;
+
 import java.security.Principal;
 import java.time.LocalDate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.hexaware.amazecare.JwtUtil;
 import com.hexaware.amazecare.dto.JwtDto;
 import com.hexaware.amazecare.dto.ResponseMessageDto;
 import com.hexaware.amazecare.exceptions.InvalidUsernameException;
+import com.hexaware.amazecare.exceptions.ResourceNotFoundException;
 import com.hexaware.amazecare.model.Doctor;
+import com.hexaware.amazecare.model.Executive;
 import com.hexaware.amazecare.model.InPatient;
 import com.hexaware.amazecare.model.LabOperator;
 import com.hexaware.amazecare.model.OutPatient;
 import com.hexaware.amazecare.model.Patient;
 import com.hexaware.amazecare.model.User;
 import com.hexaware.amazecare.service.DoctorService;
+import com.hexaware.amazecare.service.ExecutiveService;
 import com.hexaware.amazecare.service.InPatientService;
 import com.hexaware.amazecare.service.LabOperatorService;
 import com.hexaware.amazecare.service.OutPatientService;
 import com.hexaware.amazecare.service.PatientService;
 import com.hexaware.amazecare.service.UserSecurityService;
 import com.hexaware.amazecare.service.UserService;
+import com.hexaware.amazecare.controller.AuthController;
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:4200"})
 public class AuthController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -52,6 +69,10 @@ public class AuthController {
 	private OutPatientService outPatientService;
 	@Autowired
 	private LabOperatorService labOperatorService;
+	@Autowired
+	private ExecutiveService executiveService;
+	Logger logger = LoggerFactory.getLogger(AuthController.class);
+
 	
 	@PostMapping("/api/token")
 	public ResponseEntity<?> getToken(@RequestBody User user, JwtDto dto ) {
@@ -125,37 +146,19 @@ public class AuthController {
 			return ResponseEntity.badRequest().body(dto);
 		}
 	}
-	@PostMapping("/auth/sign-up/doctor")
-	public ResponseEntity<?> doctorSignUp(@RequestBody Doctor doctor, ResponseMessageDto dto) {
-		try {
-			User user = new User();
-			user.setUsername(doctor.getUser().getUsername());
-			user.setPassword(doctor.getUser().getPassword());
-			user.setRole(doctor.getUser().getRole());
-			user = userService.signup(user);
-			doctor.setUser(user);
-			doctor.setJoiningDate(LocalDate.now());
-			doctor = doctorService.insert(doctor);
-			return ResponseEntity.ok(doctor);
-
-		} catch (InvalidUsernameException e) {
-			dto.setMsg(e.getMessage());
-			return ResponseEntity.badRequest().body(dto);
-		}
-	}
 	
-	@PostMapping("/auth/sign-up/lab-operator")
-	public ResponseEntity<?> labOperatorSignUp(@RequestBody LabOperator labOperator,ResponseMessageDto dto){
+	@PostMapping("/auth/sign-up/executive")
+	public ResponseEntity<?> executiveSignUp(@RequestBody Executive executive,ResponseMessageDto dto){
 		try {
 		User user = new User();
-		user.setUsername(labOperator.getUser().getUsername());
-		user.setPassword(labOperator.getUser().getPassword());
-		user.setRole(labOperator.getUser().getRole());
+		user.setUsername(executive.getUser().getUsername());
+		user.setPassword(executive.getUser().getPassword());
+		user.setRole(executive.getUser().getRole());
 		user = userService.signup(user);
-		labOperator.setUser(user);
-		labOperator.setJoinedOn(LocalDate.now());
-		labOperator=labOperatorService.getOperator(labOperator);
-		return ResponseEntity.ok(labOperator);
+		executive.setUser(user);
+		executive.setJoinedOn(LocalDate.now());
+		executive=executiveService.getExecutive(executive);
+		return ResponseEntity.ok(executive);
 		}catch (InvalidUsernameException e) {
 			dto.setMsg(e.getMessage());
 			return ResponseEntity.badRequest().body(dto);
@@ -185,4 +188,115 @@ public class AuthController {
 		}
 		return "api accessed by: " + user;
 	}
+	@PostMapping("/api/inPatient/batch-insert")
+	public ResponseEntity<?> uploadInPatientThruExcel(@RequestBody MultipartFile file) {
+		//System.out.println(file.getOriginalFilename());
+		//System.out.println(file.getName());
+		try {
+			inPatientService.uploadInPatientThruExcel(file);
+			return ResponseEntity.ok("Records inserted in DB using Sprig Batch"); 
+		} catch (IOException e) {
+			 return ResponseEntity.badRequest().body(e.getMessage());
+		}
+		
+	}
+	@PostMapping("/api/outPatient/batch-insert")
+	public ResponseEntity<?> uploadOutPatientThruExcel(@RequestBody MultipartFile file) {
+		//System.out.println(file.getOriginalFilename());
+		//System.out.println(file.getName());
+		try {
+			outPatientService.uploadOutPatientThruExcel(file);
+			return ResponseEntity.ok("Records inserted in DB using Sprig Batch"); 
+		} catch (IOException e) {
+			 return ResponseEntity.badRequest().body(e.getMessage());
+		}
+		
+	}
+	@PostMapping("/api/doctor/batch-insert")
+	public ResponseEntity<?> uploadDoctorPatientThruExcel(@RequestBody MultipartFile file) {
+		//System.out.println(file.getOriginalFilename());
+		//System.out.println(file.getName());
+		try {
+			doctorService.uploadDoctorThruExcel(file);
+			return ResponseEntity.ok("Records inserted in DB using Sprig Batch"); 
+		} catch (IOException e) {
+			 return ResponseEntity.badRequest().body(e.getMessage());
+		}
+		
+	}
+	
+	@GetMapping("/api/inpatient/all")
+	public Page<InPatient> getAllInpatient(
+			@RequestParam(required = false, defaultValue = "0") int page, 
+			@RequestParam(required = false, defaultValue = "5000") int size) {
+		Pageable pageable =  PageRequest.of(page, size);
+		logger.info("Fetching all inpatient using pageable...");
+		if(size==5000)
+			logger.warn("Fetching inpatient without limit ");
+		return inPatientService.getAllInpatient(pageable);
+	}
+	
+	
+	@DeleteMapping("/api/inpatient/delete/{id}")
+	public ResponseEntity<?> deleteInPatietById(@PathVariable int id, 
+			ResponseMessageDto dto) 
+					throws ResourceNotFoundException {
+		logger.info("deleting inpatient by id");
+		inPatientService.validate(id);
+		inPatientService.deleteInPatientById(id);
+		dto.setMsg("inpatient Deleted");
+		logger.info("inpatient deleted with ID: " + id);
+		return ResponseEntity.ok(dto);
+	}
+	
+	
+	@GetMapping("/api/outpatient/all")
+	public Page<InPatient> getAllOutpatient(
+			@RequestParam(required = false, defaultValue = "0") int page, 
+			@RequestParam(required = false, defaultValue = "5000") int size) {
+		Pageable pageable =  PageRequest.of(page, size);
+		logger.info("Fetching all inpatient using pageable...");
+		if(size==5000)
+			logger.warn("Fetching inpatient without limit ");
+		return inPatientService.getAllInpatient(pageable);
+	}
+	
+	@DeleteMapping("/api/outpatient/delete/{id}")
+	public ResponseEntity<?> deleteOutPatientById(@PathVariable int id, 
+			ResponseMessageDto dto) 
+					throws ResourceNotFoundException {
+		logger.info("deleting outpatient by id");
+		outPatientService.validate(id);
+		outPatientService.deleteOutPatientById(id);
+		dto.setMsg("outpatient Deleted");
+		logger.info("outpatient deleted with ID: " + id);
+		return ResponseEntity.ok(dto);
+	}
+	
+	@DeleteMapping("/api/doctor/delete/{id}")
+	public ResponseEntity<?> deleteDoctorById(@PathVariable int id, 
+			ResponseMessageDto dto) 
+					throws ResourceNotFoundException {
+		logger.info("deleting doctor by id");
+		doctorService.validate(id);
+		doctorService.deleteDoctorById(id);
+		dto.setMsg("doctor Deleted");
+		logger.info("doctor deleted with ID: " + id);
+		return ResponseEntity.ok(dto);
+	}
+	@GetMapping("/auth/userDetails")
+	public ResponseEntity<?>getUserDetails(Principal principal){
+		String loggedInUsername = principal.getName();
+		User user  = (User)userSecurityService.loadUserByUsername(loggedInUsername);
+		String role=user.getRole().toString();
+		switch(role) {
+		case "DOCTOR":
+			return ResponseEntity.ok(doctorService.getDoctorDetails(user.getId()));
+		case "EXECUTIVE":
+			return ResponseEntity.ok(executiveService.getExecutiveDetails(user.getId()));
+		}
+		return ResponseEntity.badRequest().body("NOT FOUND");
+		
+	}
+
 }

@@ -1,7 +1,10 @@
+
 package com.hexaware.amazecare.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -27,6 +30,6 @@ public interface ReportRepository extends JpaRepository<Report, Integer>{
 		"LEFT JOIN OutPatient o ON o.id = p.id " +
 		"WHERE p.id = ?1"
 )
-	List<Object[]> fetchReport(int pid);
+	Page<Object[]> fetchReport(int pid,Pageable pageable);
 
 }
