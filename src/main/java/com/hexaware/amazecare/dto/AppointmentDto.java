@@ -5,6 +5,20 @@ import java.time.LocalDate;
 import org.springframework.stereotype.Component;
 @Component
 public class AppointmentDto {
+	private int appointmentId;
+	private int patientId;
+	public int getAppointmentId() {
+		return appointmentId;
+	}
+	public void setAppointmentId(int appointmentId) {
+		this.appointmentId = appointmentId;
+	}
+	public int getPatientId() {
+		return patientId;
+	}
+	public void setPatientId(int patientId) {
+		this.patientId = patientId;
+	}
 	private String name;
 	private int age;
 	private String gender;
@@ -56,8 +70,9 @@ public class AppointmentDto {
 	}
 	@Override
 	public String toString() {
-		return "AppointmentDto [name=" + name + ", age=" + age + ", gender=" + gender + ", patient_type=" + patient_type
-				+ ", date=" + date + ", timeSlot=" + timeSlot + ", status=" + status + "]";
+		return "AppointmentDto [appointmentId=" + appointmentId + ", patientId=" + patientId + ", name=" + name
+				+ ", age=" + age + ", gender=" + gender + ", patient_type=" + patient_type + ", date=" + date
+				+ ", timeSlot=" + timeSlot + ", status=" + status + "]";
 	}
 	
 

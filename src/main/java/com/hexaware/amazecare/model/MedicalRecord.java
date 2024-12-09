@@ -63,6 +63,21 @@ public class MedicalRecord {
 		return "MedicalRecord [id=" + id + ", generationDate=" + generationDate + ", treatmentPlan=" + treatmentPlan
 				+ ", prescription=" + prescription + ", doctor=" + doctor + ", patient=" + patient + "]";
 	}
+	public MedicalRecord(int id, LocalDate generationDate, String treatmentPlan, String prescription, Doctor doctor,
+			Patient patient) {
+		super();
+		this.id = id;
+		this.generationDate = generationDate;
+		this.treatmentPlan = treatmentPlan;
+		this.prescription = prescription;
+		this.doctor = doctor;
+		this.patient = patient;
+	}
+	public MedicalRecord() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
 	
 
 }
