@@ -1,5 +1,6 @@
 package com.hexaware.amazecare.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,10 @@ public class ExecutiveService {
 
 	public Executive getExecutiveDetailsById(int eid) {
 		return executiveRepository.findById(eid).get();
+	}
+
+	public List<Executive> getAllExecutives() {
+		return executiveRepository.findAll();
 	}
 
 }

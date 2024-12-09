@@ -29,8 +29,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hexaware.amazecare.JwtUtil;
 import com.hexaware.amazecare.dto.JwtDto;
 import com.hexaware.amazecare.dto.ResponseMessageDto;
+import com.hexaware.amazecare.enums.Role;
 import com.hexaware.amazecare.exceptions.InvalidUsernameException;
 import com.hexaware.amazecare.exceptions.ResourceNotFoundException;
+import com.hexaware.amazecare.model.Admin;
 import com.hexaware.amazecare.model.Doctor;
 import com.hexaware.amazecare.model.Executive;
 import com.hexaware.amazecare.model.InPatient;
@@ -38,6 +40,7 @@ import com.hexaware.amazecare.model.LabOperator;
 import com.hexaware.amazecare.model.OutPatient;
 import com.hexaware.amazecare.model.Patient;
 import com.hexaware.amazecare.model.User;
+import com.hexaware.amazecare.service.AdminService;
 import com.hexaware.amazecare.service.DoctorService;
 import com.hexaware.amazecare.service.ExecutiveService;
 import com.hexaware.amazecare.service.InPatientService;
@@ -71,6 +74,8 @@ public class AuthController {
 	private LabOperatorService labOperatorService;
 	@Autowired
 	private ExecutiveService executiveService;
+	@Autowired
+	private AdminService adminService;
 	Logger logger = LoggerFactory.getLogger(AuthController.class);
 
 	
@@ -153,7 +158,7 @@ public class AuthController {
 		User user = new User();
 		user.setUsername(executive.getUser().getUsername());
 		user.setPassword(executive.getUser().getPassword());
-		user.setRole(executive.getUser().getRole());
+		user.setRole(Role.EXECUTIVE);
 		user = userService.signup(user);
 		executive.setUser(user);
 		executive.setJoinedOn(LocalDate.now());
@@ -294,9 +299,12 @@ public class AuthController {
 			return ResponseEntity.ok(doctorService.getDoctorDetails(user.getId()));
 		case "EXECUTIVE":
 			return ResponseEntity.ok(executiveService.getExecutiveDetails(user.getId()));
+		case "ADMIN":
+			return ResponseEntity.ok(adminService.getAdminByUserId(user.getId()));
 		}
 		return ResponseEntity.badRequest().body("NOT FOUND");
 		
 	}
+	
 
 }

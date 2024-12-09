@@ -99,6 +99,25 @@ public class Doctor {
 		return "Doctor [id=" + id + ", name=" + name + ", email=" + email + ", contact=" + contact + ", experience="
 				+ experience + ", joiningDate=" + joiningDate + ", department=" + department + ", user=" + user + "]";
 	}
+
+	public Doctor(int id, String name, String email, String contact, int experience, LocalDate joiningDate,
+			Department department, User user) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.email = email;
+		this.contact = contact;
+		this.experience = experience;
+		this.joiningDate = joiningDate;
+		this.department = department;
+		this.user = user;
+	}
+
+	public Doctor() {
+		super();
+		
+	}
+	
 	
 
 }

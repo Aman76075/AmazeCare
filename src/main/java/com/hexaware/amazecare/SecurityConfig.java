@@ -45,6 +45,11 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET,"/doctor/getAllTestType").permitAll()
 						.requestMatchers(HttpMethod.GET,"/doctor/getAllTimeSlots").permitAll()
 						.requestMatchers(HttpMethod.GET,"/auth/userDetails").authenticated()
+						.requestMatchers(HttpMethod.POST,"/api/addAdmin").permitAll()
+						.requestMatchers(HttpMethod.GET,"/api/getAllExecutives").hasAuthority("ADMIN")
+						.requestMatchers(HttpMethod.POST,"/auth/sign-up/executive").hasAuthority("ADMIN")
+						.requestMatchers(HttpMethod.GET,"/api/users-stat").hasAuthority("ADMIN")
+						.requestMatchers(HttpMethod.GET,"/appointment/completed/{aid}").hasAuthority("DOCTOR")
 						.requestMatchers(HttpMethod.POST,"/doctor/updateDoctor/{did}").hasAuthority("DOCTOR")
 						.requestMatchers(HttpMethod.POST,"/doctor/setSchedule/{did}").hasAuthority("DOCTOR")
 						.requestMatchers(HttpMethod.GET,"/doctor/appointment/getAll/{did}").hasAuthority("DOCTOR")
@@ -61,7 +66,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	PasswordEncoder getEncoder() {
+	BCryptPasswordEncoder getEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 

@@ -50,6 +50,19 @@ public class Patient {
 	public String toString() {
 		return "Patient [id=" + id + ", patientType=" + patientType + ", user=" + user + "]";
 	}
+
+	public Patient(int id, PatientType patientType, User user) {
+		super();
+		this.id = id;
+		this.patientType = patientType;
+		this.user = user;
+	}
+
+	public Patient() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
 	
 
 }

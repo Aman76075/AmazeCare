@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hexaware.amazecare.dto.AppointmentDto;
 import com.hexaware.amazecare.dto.ResponseMessageDto;
 import com.hexaware.amazecare.dto.UpdateDetailsDto;
+import com.hexaware.amazecare.enums.Appointment_Status;
 import com.hexaware.amazecare.enums.ScanTestType;
 import com.hexaware.amazecare.enums.TestScanStatus;
 import com.hexaware.amazecare.enums.TimeSlot;
@@ -37,6 +38,7 @@ import com.hexaware.amazecare.model.MedicalRecord;
 import com.hexaware.amazecare.model.Patient;
 import com.hexaware.amazecare.model.TestAndScans;
 import com.hexaware.amazecare.model.User;
+import com.hexaware.amazecare.service.AppointmentService;
 import com.hexaware.amazecare.service.DoctorService;
 import com.hexaware.amazecare.service.MedicalRecordService;
 import com.hexaware.amazecare.service.PatientService;
@@ -52,6 +54,8 @@ public class DoctorController {
 	private UserService userService;
 	@Autowired
 	private PatientService patientService;
+	@Autowired
+	private AppointmentService appointmentService;
 	
 	@Autowired
 	private MedicalRecordService medicalRecordService;
@@ -160,6 +164,13 @@ public class DoctorController {
 		}
 		Page<MedicalRecord> list =medicalRecordService.getAllMedicalRecordwithId(pid,pageable);
 		return list; 
+	}
+	@GetMapping("/appointment/completed/{aid}")
+	public Appointment markAsCompleted(@PathVariable int aid) {
+		Appointment appoint=appointmentService.getAppointment(aid);
+		System.out.println(appoint);
+		appoint.setStatus(Appointment_Status.COMPLETED);
+		return appointmentService.addAppointment(appoint);
 	}
 
 }
